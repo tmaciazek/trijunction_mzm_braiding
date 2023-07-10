@@ -23,4 +23,10 @@ In order to more conveniently parametrise the positions of the MZMs during the e
 
 ![Image](https://github.com/tmaciazek/trijunction_mzm_braiding/blob/main/stages.png)
 
-The positions of the MZMs in each stage (I - IV) are described by vectors $\mathbf{s}_1$
+The positions of the MZMs in each stage (I - IV) are described by vectors $\mathbf{s}_1$ and $\mathbf{s}_2$, i.e. the $k$-th element of the vector $\mathbf{s}_j$ determines the position of MZM with label $j$ at timestep $k$ of the given stage. The positions of the MZMs during the exchange determine the exact time dependence of the Hamiltonian and consequently allow us to compute the fidelity via the Suzuki-Trotter and Onishi formulas.
+
+The neural net architecture that has been used for optimising the fidelity is shown below.
+
+
+
+This way, the positions of the MZMs are functions of the neural net weights. The fidelity is optimised via gradient descent - the automatic differentiation is applied to find the partial derivatives of the fidelity with respect to the neural net weights.
