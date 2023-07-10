@@ -27,6 +27,6 @@ The positions of the MZMs in each stage (I - IV) are described by vectors $\math
 
 The neural net architecture that has been used for optimising the fidelity is shown below.
 
-
+![Image](https://github.com/tmaciazek/trijunction_mzm_braiding/blob/main/nn.png)
 
 This way, the positions of the MZMs are functions of the neural net weights. The fidelity is optimised via gradient descent - the automatic differentiation is applied to find the partial derivatives of the fidelity with respect to the neural net weights.
