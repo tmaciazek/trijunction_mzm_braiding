@@ -30,3 +30,7 @@ The neural net architecture that has been used for optimising the fidelity is sh
 ![Image](https://github.com/tmaciazek/trijunction_mzm_braiding/blob/main/nn.png)
 
 This way, the positions of the MZMs are functions of the neural net weights. The fidelity is optimised via gradient descent - the automatic differentiation is applied to find the partial derivatives of the fidelity with respect to the neural net weights.
+
+The neural net is first pretrained so that it outputs a motion where the positions of MZMs are described by appropriately scaled sin- and cos- functions of time. Then, we train the neural net for 150 epochs (gradient steps) which results with dropping the infidelity by three orders of magnitude from $0.19$ to $0.0002$. The resulting trajectory is plotted in figure below. 
+
+![Image](https://github.com/tmaciazek/trijunction_mzm_braiding/blob/main/trained.png)
