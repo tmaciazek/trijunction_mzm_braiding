@@ -38,4 +38,11 @@ The neural net is first pretrained so that it outputs a motion where the positio
 
 ![Image](https://github.com/tmaciazek/trijunction_mzm_braiding/blob/main/pictures/trained.png)
 
-![Image](https://github.com/tmaciazek/trijunction_mzm_braiding/blob/main/pictures/dots.gif)
+The animations below show the resulting transport protocol together with the corresponding time evolution of the wavefunction.
+
+Solarized dark             |  Solarized Ocean
+:-------------------------:|:-------------------------:
+![Image](https://github.com/tmaciazek/trijunction_mzm_braiding/blob/main/pictures/dots.gif)  |  ![Image](https://github.com/tmaciazek/trijunction_mzm_braiding/blob/main/pictures/colormap.gif)
+
+
+
