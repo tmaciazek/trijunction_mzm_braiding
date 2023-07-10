@@ -7,4 +7,4 @@ Some of the leading proposals for the realisation of a topological quantum compu
 
 In the superconducting regime, there exist two Majorana zero modes (MZMs) localised at the endpoints of the topological region in the nanowire. Crucially, the MZMs can be moved around the nanowire network only by tuning local voltages along the wires -- see the work by J. Alicea et al.[ Nature Physics vol 7, pp 412–417 (2011)](https://www.nature.com/articles/nphys1915). Building up on the ideas from this paper, we simulate the process of the exchange of MZMs on a trijunction as shown in the picture below.
 
-![Image](https://user-images.githubusercontent.com/25779748/252356924-702e35db-26d7-4d7c-aa66-61e5daa96271.png)
+![Image](https://github.com/tmaciazek/trijunction_mzm_braiding/blob/main/Texchange.png)
