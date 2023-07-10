@@ -11,4 +11,4 @@ In the superconducting regime, there exist two Majorana zero modes (MZMs) locali
 
 Simulating the exchange process on a computer means simulating the time evolution of the respective quantum system. The total time, $T$, of the evolution is fixed and the evolution is discretised in $N_T$ time-steps. In order to find the evolution operator, we use the Suzuki-Trotter formula
 
-$$ U_{ev}=\prod_{k=1}^{N_T} $$
+$$ U_{ev}=\prod_{k=1}^{N_T}\, e^{-i H(k \Delta t) \Delta t}, \quad \Delta t=T/N_T. $$
