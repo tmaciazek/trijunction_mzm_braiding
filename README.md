@@ -19,4 +19,8 @@ Note, that in the adiabatic case we would have $\mathcal{F}=1$. However, because
 
 ## Optimisation of the fidelity via a neural net
 
+In order to more conveniently parametrise the positions of the MZMs during the exchange process, we divide the exchange into four stages as shown below.
 
+![Image](https://github.com/tmaciazek/trijunction_mzm_braiding/blob/main/stages.png)
+
+The positions of the MZMs in each stage (I - IV) are described by vectors $\mathbf{s}_1$
