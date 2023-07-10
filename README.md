@@ -38,7 +38,7 @@ The neural net is first pretrained so that it outputs a motion where the positio
 
 ![Image](https://github.com/tmaciazek/trijunction_mzm_braiding/blob/main/pictures/trained.png | width=100)
 
-<img src="https://github.com/tmaciazek/trijunction_mzm_braiding/blob/main/pictures/trained.png" width="400" height="400">
+<img src="https://github.com/tmaciazek/trijunction_mzm_braiding/blob/main/pictures/trained.png" width="800" height="400">
 
 The animations below show the resulting transport protocol together with the corresponding time evolution of the wavefunction.
 
