@@ -16,7 +16,7 @@ Simulating the exchange process on a computer means simulating the time evolutio
 
 $$ U_{ev}=\prod_{k=1}^{N_T} e^{-i H(k \Delta t) \Delta t}, \quad \Delta t=T/N_T. $$
 
-After computing the evolution operator for the system of two MZMs we evaluate the **fidelity**, $\mathcal{F}$, via the Onishi formula (for more details, see the paper by L. Coopmans et al. [PRX Quantum 2, 020332 (2021)](https://doi.org/10.48550/arXiv.2008.09128).
+After computing the evolution operator for the system of two MZMs we evaluate the **fidelity**, $\mathcal{F}$, via the Onishi formula (for more details, see the paper by L. Coopmans et al. [PRX Quantum 2, 020332 (2021)](https://doi.org/10.48550/arXiv.2008.09128)).
 
 Note, that in the adiabatic case we would have $\mathcal{F}=1$. However, because the total time $T$ is finite, we necessarily have $\mathcal{F}<1$.
 
