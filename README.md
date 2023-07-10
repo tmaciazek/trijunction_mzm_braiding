@@ -24,7 +24,9 @@ Note, that in the adiabatic case we would have $\mathcal{F}=1$. However, because
 
 In order to more conveniently parametrise the positions of the MZMs during the exchange process, we divide the exchange into four stages as shown below.
 
-<img align="center" src="https://github.com/tmaciazek/trijunction_mzm_braiding/blob/main/pictures/stages.png" width="600" height="264">
+<p align="center">
+<img src="https://github.com/tmaciazek/trijunction_mzm_braiding/blob/main/pictures/stages.png" width="600" height="264">
+</p>
 
 The positions of the MZMs in each stage (I - IV) are described by vectors $\mathbf{s}_1$ and $\mathbf{s}_2$, i.e. the $k$-th element of the vector $\mathbf{s}_j$ determines the position of MZM with label $j$ at timestep $k$ of the given stage. The positions of the MZMs during the exchange determine the exact time dependence of the Hamiltonian and consequently allow us to compute the fidelity via the Suzuki-Trotter and Onishi formulas.
 
