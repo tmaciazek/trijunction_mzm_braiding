@@ -9,6 +9,8 @@ In the superconducting regime, there exist two Majorana zero modes (MZMs) locali
 
 ![Image](https://github.com/tmaciazek/trijunction_mzm_braiding/blob/main/Texchange.png)
 
-Simulating the exchange process on a computer means simulating the time evolution of the respective quantum system. The total time, $T$, of the evolution is fixed and the evolution is discretised in $N_T$ time-steps. In order to find the evolution operator, we use the Suzuki-Trotter formula
+Simulating the exchange process on a computer means simulating the time evolution of the respective quantum system. The total time, $T$, of the evolution is fixed and the evolution is discretised in $N_T$ time-steps. Abstractly, in order to find the evolution operator of time-dependent Hamiltonian $H(t)$, we use the Suzuki-Trotter formula
 
-$$ U_{ev}=\prod_{k=1}^{N_T}/, e^{-i H(k \Delta t) \Delta t}, \quad \Delta t=T/N_T. $$
+$$ U_{ev}=\prod_{k=1}^{N_T} e^{-i H(k \Delta t) \Delta t}, \quad \Delta t=T/N_T. $$
+
+After computing the evolution operator for the system of two MZMs we evaluate the **fidelity**, $\mathcal{F}$, via the Onishi formula (for more details, see the paper by L. Coopmans et al. [PRX Quantum 2, 020332 (2021)](https://doi.org/10.48550/arXiv.2008.09128).
