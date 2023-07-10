@@ -10,7 +10,7 @@ Some of the leading proposals for the realisation of a topological quantum compu
 
 In the superconducting regime, there exist two Majorana zero modes (MZMs) localised at the endpoints of the topological region in the nanowire. Crucially, the MZMs can be moved around the nanowire network only by tuning local voltages along the wires -- see the work by J. Alicea et al.[ Nature Physics vol 7, pp 412–417 (2011)](https://www.nature.com/articles/nphys1915). Building up on the ideas from this paper, we simulate the process of the exchange of MZMs on a trijunction as shown in the picture below.
 
-![Image](https://github.com/tmaciazek/trijunction_mzm_braiding/blob/main/Texchange.png)
+![Image](https://github.com/tmaciazek/trijunction_mzm_braiding/blob/main/pictures/Texchange.png)
 
 Simulating the exchange process on a computer means simulating the time evolution of the respective quantum system. The total time, $T$, of the evolution is fixed and the evolution is discretised in $N_T$ time-steps. Abstractly, in order to find the evolution operator of time-dependent Hamiltonian $H(t)$, we use the Suzuki-Trotter formula
 
@@ -24,16 +24,18 @@ Note, that in the adiabatic case we would have $\mathcal{F}=1$. However, because
 
 In order to more conveniently parametrise the positions of the MZMs during the exchange process, we divide the exchange into four stages as shown below.
 
-![Image](https://github.com/tmaciazek/trijunction_mzm_braiding/blob/main/stages.png)
+![Image](https://github.com/tmaciazek/trijunction_mzm_braiding/blob/main/pictures/stages.png)
 
 The positions of the MZMs in each stage (I - IV) are described by vectors $\mathbf{s}_1$ and $\mathbf{s}_2$, i.e. the $k$-th element of the vector $\mathbf{s}_j$ determines the position of MZM with label $j$ at timestep $k$ of the given stage. The positions of the MZMs during the exchange determine the exact time dependence of the Hamiltonian and consequently allow us to compute the fidelity via the Suzuki-Trotter and Onishi formulas.
 
 The neural net architecture that has been used for optimising the fidelity is shown below.
 
-![Image](https://github.com/tmaciazek/trijunction_mzm_braiding/blob/main/nn.png)
+![Image](https://github.com/tmaciazek/trijunction_mzm_braiding/blob/main/pictures/nn.png)
 
 This way, the positions of the MZMs are functions of the neural net weights. The fidelity is optimised via gradient descent - the automatic differentiation is applied to find the partial derivatives of the fidelity with respect to the neural net weights.
 
 The neural net is first pretrained so that it outputs a motion where the positions of MZMs are described by appropriately scaled sin- and cos- functions of time. Then, we train the neural net for 150 epochs (gradient steps) which results with dropping the infidelity by three orders of magnitude from $0.19$ to $0.00017$. The resulting trajectory is plotted in figure below. 
 
-![Image](https://github.com/tmaciazek/trijunction_mzm_braiding/blob/main/trained.png)
+![Image](https://github.com/tmaciazek/trijunction_mzm_braiding/blob/main/pictures/trained.png)
+
+![Image](https://github.com/tmaciazek/trijunction_mzm_braiding/blob/main/pictures/dots.gif)
