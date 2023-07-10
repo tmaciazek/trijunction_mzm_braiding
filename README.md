@@ -44,5 +44,5 @@ MZM transport protocol             |  Wavefunction
 :-------------------------:|:-------------------------:
 ![Image](https://github.com/tmaciazek/trijunction_mzm_braiding/blob/main/pictures/dots.gif)  |  ![Image](https://github.com/tmaciazek/trijunction_mzm_braiding/blob/main/pictures/colormap.gif)
 
-
+Thanks to this simulation we have gained crucial insights into the properties of optimal MZM transport protocols. Namely, the MZMs have to slowly ramp-up and ramp-down their velocities and stop at the junction.
 
