@@ -1,6 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+"""
+Created on Tue Jul 11 2023
+Main code for training a neural net to find optimal exchange protocol.
+@author: tmaciazek
+"""
+
 import numpy as np
 import matplotlib.pyplot as plt
 import time
