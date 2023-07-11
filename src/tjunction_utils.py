@@ -1,3 +1,12 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+"""
+Created on Tue Jul 11 2023
+Utility functions for training a neural net to find optimal exchange protocol.
+@author: tmaciazek
+"""
+
 import matplotlib.pyplot as plt
 import numpy as np
 from math import pi
