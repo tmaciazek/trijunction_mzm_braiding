@@ -193,7 +193,7 @@ plt.show()
 """
 	Optimisation
 """
-'''
+
 lr = 0.00001
 model.compile(optimizer=Adam(learning_rate=lr))
 print("Learning Rate: " + str(lr))
@@ -224,4 +224,3 @@ s12pred = model(tVec)
 np.savetxt("short_s12_50EP" + appendix + ".txt", s12pred)
 
 model.save_weights("/user/work/kk19347/short_exchange_trained50EP" + appendix)
-'''
