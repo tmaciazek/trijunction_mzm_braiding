@@ -60,3 +60,8 @@ MZM transport protocol             |  Wavefunction evolution (logscale)
 
 Thanks to this simulation we have gained crucial insights into the properties of optimal MZM transport protocols. Namely, the MZMs have to slowly ramp-up and ramp-down their velocities and stop at the junction.
 
+## Outlook
+
+* Study systems with larger numbers of sites. The current bottleneck is the memory usage due to the backprop -- propagating gradients through the Suzuki-Trotter formula costs a lot of memory since the formula involves the product of thousands of matrices.
+* Potential remedy to memory issue: compute gradients via forward prop.
+
