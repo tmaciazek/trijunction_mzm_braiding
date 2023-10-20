@@ -5,7 +5,8 @@ Simulation of the topological quantum gate realised by exchanging two Majorana z
 
 [src](https://github.com/tmaciazek/trijunction_mzm_braiding/tree/main/src):
 * [NN_training.py](https://github.com/tmaciazek/trijunction_mzm_braiding/blob/main/src/NN_training.py) -- The main code for optimising the exchange protocol using a neural net (for more details see the sections below).
-* [tjunction_utils.py](https://github.com/tmaciazek/trijunction_mzm_braiding/blob/main/src/tjunction_utils.py) -- Utility functions used in the main code. This includes simulation of the quantum evolution and implementation of the Suzuki-Trotter and Onishi formulas (see the sections below for more details).
+* [direct_grad.py](https://github.com/tmaciazek/trijunction_mzm_braiding/blob/main/src/direct_grad.py) -- The main code for optimising the exchange protocol using the direc gradient descent on the shuttle profile.
+* [tjunction_utils.py](https://github.com/tmaciazek/trijunction_mzm_braiding/blob/main/src/tjunction_utils.py) -- Utility functions used in the main code. This includes simulation of the quantum evolution and implementation of the Suzuki-Trotter and Onishi formulas (see the sections below for more details) as well as analytic calculation of the gradient of the quantum infidelity.
 * [dnn_utils.py](https://github.com/tmaciazek/trijunction_mzm_braiding/blob/main/src/dnn_utils.py) -- Utility functions for forwardprop and backprop in deep neural netork.
 * [src/models](https://github.com/tmaciazek/trijunction_mzm_braiding/tree/main/src/models): -- Weights of the neural net trained using University of Bristol HPC facilities. The model `harmonic_pretrained` outputs an exchnage process where the motion is harmonic. This is the starting point for further neural net optimisation with the cost function givan infidelity (see below for more details). The effect of training through 120 epochs is the model `harmoinc_trained_120EP'.
 * [src/profiles](https://github.com/tmaciazek/trijunction_mzm_braiding/tree/main/src/profiles): -- Folder containig the MZM exchange profiles after applying direct gradient descent. The file `direct_grad_harmonic_120EP_60steps` contains the results of 60 steps of the gradient descent applied to the output of the model `harmoinc_trained_120EP'.
@@ -61,9 +62,4 @@ MZM transport protocol             |  Wavefunction evolution (logscale)
 ![Image](https://github.com/tmaciazek/trijunction_mzm_braiding/blob/main/pictures/dots.gif)  |  ![Image](https://github.com/tmaciazek/trijunction_mzm_braiding/blob/main/pictures/colormap.gif)
 
 Thanks to this simulation we have gained crucial insights into the properties of optimal MZM transport protocols. Namely, the MZMs have to slowly ramp-up and ramp-down their velocities and stop at the junction.
-
-## Outlook
-
-* Study systems with larger numbers of sites. The current bottleneck is the memory usage due to the backprop -- propagating gradients through the Suzuki-Trotter formula costs a lot of memory since the formula involves the product of thousands of matrices.
-* Potential remedy to memory issue: compute gradients via forward prop.
 
