@@ -1,36 +1,57 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-"""
-Created on Tue Jul 11 2023
-Main code for training a neural net to find optimal exchange protocol.
-@author: tmaciazek
-"""
-
 import numpy as np
 import matplotlib.pyplot as plt
 import time
+
 import os
-from tjunction_utils import *
 
-os.environ["TF_CPP_MIN_LOG_LEVEL"] = "1"
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
+
 import tensorflow as tf
-
-# suppress warnings
-tf.get_logger().setLevel("ERROR")
-tf.autograph.set_verbosity(0)
-
+from tensorflow.keras.optimizers.legacy import Adam
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
-from tensorflow.keras.optimizers.legacy import Adam
+
+# suppress warnings
+import logging
+
+logging.getLogger("tensorflow").setLevel(logging.ERROR)
+tf.autograph.set_verbosity(0)
+
+from tjunction_utils import *
+from dnn_utils import *
+
+tfpi = tf.constant(pi, dtype=tf.float64)
 
 
+N = 55 #number of sites
+Delta = -0.55; #superconducting gap
+w = 2.; #hopping amplitude
+V0=30.1 #peak of the on-site potential
+dedge = 5.
+mu0 = 1. # background potential
+noiseVar = 0.02 # variance of mu0 noise, set to 0.0 for no noise
+
+"""
 N = 30  # number of sites is 3N+1
 Delta = -400.0  # superconducting gap
 w = 800.0  # hopping amplitude
 V0 = 1400.0  # peak of the on-site potential
 dedge = 3.0  # anyons' positions away from the edge
 mu0 = 0.0  # baseline potential
+"""
+
+
+"""
+	Adding noise to the background potential
+	
+	If random.seed is not fixed, the code realises online stochastic gradient descent.
+"""
+#np.random.seed(42) # uncomment for constant noise training
+noise = np.random.normal(0.0, noiseVar, 3 * N + 1)
+
 
 """
 	Hamiltonian with zero on-site potentials
@@ -39,17 +60,12 @@ mu0 = 0.0  # baseline potential
 KitaevH = construct_hamiltonian_zero_diag(N, Delta, w, V0, dedge)
 
 """
-	update the diagonal of the Hamiltonian with suitable on-site potentials
-	
-"""
-
-"""
 	Hamiltonian at time t=0
 """
 
 s10 = tf.constant([0.0], dtype=tf.float64)
 s20 = tf.constant([0.0], dtype=tf.float64)
-PotentialProfile0 = potential_profile_I(N, dedge, mu0, V0, s10, s20)
+PotentialProfile0 = potential_profile_I(N, dedge, mu0, noise, V0, s10, s20)
 KitaevH0 = tf.tensor_scatter_nd_update(
     KitaevH, [[i, i] for i in range(6 * N + 2)], PotentialProfile0[0]
 )
@@ -74,7 +90,7 @@ zeromode20 = eig0[1][:, 3 * N]
 
 s1T = tf.constant([1.0], dtype=tf.float64)
 s2T = tf.constant([1.0], dtype=tf.float64)
-PotentialProfileT = potential_profile_IV(N, dedge, mu0, V0, s1T, s2T)
+PotentialProfileT = potential_profile_IV(N, dedge, mu0, noise, V0, s1T, s2T)
 KitaevHT = tf.tensor_scatter_nd_update(
     KitaevH, [[i, i] for i in range(6 * N + 2)], PotentialProfileT[0]
 )
@@ -89,20 +105,18 @@ print(
 zeromode1 = eigT[1][:, 3 * N + 1]
 zeromode2 = eigT[1][:, 3 * N]
 
-# PlotModes(N,zeromode1,zeromode2)
-# plt.show()
+#plot_modes(N, zeromode1, zeromode2)
+#plt.show()
+
 
 """
 	EXCHANGE IN 4 STAGES 
 	
-	Stages I and IV take DeltaT time and have NT time steps.
-	Stages II and III take 2*DeltaT time and have 2*NT time steps.
+	Each stage takes DeltaT time and has NT time steps.
 """
 
-DeltaT = 0.9
-NT = 1000
-
-
+DeltaT = 250.0
+NT = 2000
 dt = DeltaT / NT
 
 
@@ -121,10 +135,11 @@ def loss_fn(s12pred):
 
     zero = tf.constant([0.0], dtype=tf.float64)
     one = tf.constant([1.0], dtype=tf.float64)
-    UI = transport_operator_map(
+    UI = transport_operator(
         N,
         KitaevH,
         mu0,
+        noise,
         V0,
         dedge,
         tf.concat([zero, s1VarI, one], -1),
@@ -132,16 +147,17 @@ def loss_fn(s12pred):
         dt,
         "I",
     )
-    UII = transport_operator_map(
-        N, KitaevH, mu0, V0, dedge, s1VarII, tf.concat([s2VarII, one], -1), dt, "II"
+    UII = transport_operator(
+        N, KitaevH, mu0, noise, V0, dedge, s1VarII, tf.concat([s2VarII, one], -1), dt, "II"
     )
-    UIII = transport_operator_map(
-        N, KitaevH, mu0, V0, dedge, tf.concat([s1VarIII, one], -1), s2VarIII, dt, "III"
+    UIII = transport_operator(
+        N, KitaevH, mu0, noise, V0, dedge, tf.concat([s1VarIII, one], -1), s2VarIII, dt, "III"
     )
-    UIV = transport_operator_map(
+    UIV = transport_operator(
         N,
         KitaevH,
         mu0,
+        noise,
         V0,
         dedge,
         tf.concat([s1VarIV, one], -1),
@@ -153,83 +169,77 @@ def loss_fn(s12pred):
 
     return infidelity(N, eig0[1], eigT[1], Utot)
 
-
 """
-	Build Model
+	Optimisation via NN
 """
 
-model = Sequential()
-model.add(Dense(400, activation="relu"))
-NHlayers = 2
-for ilayer in range(NHlayers):
-    model.add(Dense(1800, activation="relu"))
-model.add(Dense(1200, activation="relu"))
-model.add(Dense(8, activation="sigmoid"))
+tVec = np.linspace(0.0, 1.0, NT, dtype=np.float64).reshape(1, -1)
+layer_dims = [400, 1800, 1800, 1200, 8]
 
-
-# model.load_weights('models/short_sinusoidal_pretrained_3HL')
-model.load_weights("models/short_exchange_trained150EP3HL_run4")
-
-
-tVec = tf.reshape(tf.cast(tf.linspace(0.0, 1.0, NT - 1), dtype=tf.float64), [-1, 1])
-s12pred = model.predict(tVec)
-
-model.summary()
-
-then = time.time()
-
-infid = loss_fn(s12pred)
-print("Starting infidelity: " + str(infid.numpy()))
-print("Transport took: " + str(time.time() - then) + " seconds")
-
-
-(
-    s1VarI,
-    s2VarI,
-    s1VarII,
-    s2VarII,
-    s1VarIII,
-    s2VarIII,
-    s1VarIV,
-    s2VarIV,
-) = profiles_from_NN(s12pred)
-plot_profiles(
-    NT, s1VarI, s2VarI, s1VarII, s2VarII, s1VarIII, s2VarIII, s1VarIV, s2VarIV
+ep0 = 0
+params = initialize_parameters_from_model(
+    #layer_dims, file='models/linear_trained_'+str(ep0)+'EP'
+    layer_dims, file='models/harmonic_pretrained'
 )
-plt.show()
+total_params = 0
+
+print("Model summary:")
+for layer in range(1, len(layer_dims) + 1):
+    print("Layer " + str(layer))
+    print(params["W" + str(layer)].shape)
+    layer_params = (
+        params["W" + str(layer)].shape[0] * params["W" + str(layer)].shape[1]
+        + params["b" + str(layer)].shape[0]
+    )
+    print(layer_params)
+    total_params += layer_params
+print("Total params:\t" + str(total_params) + "\n")
+
+s12pred, _ = model_forward(tVec, params)
+s12 = tf.convert_to_tensor(np.transpose(s12pred), dtype=tf.float64)
 
 
-"""
-	Optimisation
-"""
+lr = 1e-4
+optimizer = Adam(learning_rate=lr)
 
-lr = 0.00001
-model.compile(optimizer=Adam(learning_rate=lr))
-print("Learning Rate: " + str(lr))
+n_epochs = 120
 
+for ep in range(n_epochs):
+    print("Step ", ep+ep0)
+    
+    noise = np.random.normal(0.0, noiseVar, 3 * N + 1)
 
-@tf.function
-def update_loss(model):
-    with tf.GradientTape() as tape:
-        s12pred = model(tVec)
-        L = loss_fn(s12pred)
-    grad = tape.gradient(L, model.trainable_variables)
-    model.optimizer.apply_gradients(zip(grad, model.trainable_variables))
-    return L
+    PotentialProfile0 = potential_profile_I(N, dedge, mu0, noise, V0, s10, s20)
+    KitaevH0 = tf.tensor_scatter_nd_update(
+        KitaevH, [[i, i] for i in range(6 * N + 2)], PotentialProfile0[0]
+    )
+    eig0 = tf.linalg.eigh(KitaevH0)
+    
+    PotentialProfileT = potential_profile_IV(N, dedge, mu0, noise, V0, s1T, s2T)
+    KitaevHT = tf.tensor_scatter_nd_update(
+        KitaevH, [[i, i] for i in range(6 * N + 2)], PotentialProfileT[0]
+    )
+    eigT = tf.linalg.eigh(KitaevHT)
 
-
-appendix = "3HL"
-
-N_epochs = 50
-for i in range(N_epochs):
-    print("Step ", i)
+    
     then = time.time()
-    Loss_i = update_loss(model)
-    print("Gradient descent step {} took: ".format(i), time.time() - then, "seconds")
-    print("Current Infidelity:", Loss_i.numpy())
+
+    s12pred, caches = model_forward(tVec, params)
+    s12 = tf.convert_to_tensor(np.transpose(s12pred), dtype=tf.float64)
+
+    loss_grad = infidelity_grad(N, eig0[1], eigT[1], KitaevH, mu0, noise, V0, dedge, s12, dt)
+    grads = model_backward(s12pred, tf.transpose(loss_grad[1]), caches)
+    params = update_parameters(params, grads, optimizer)
+
+    print("Current Infidelity:\t", loss_grad[0].numpy())
+    print("Gradient descent step {} took:\t".format(ep), time.time() - then, "seconds")
+    
+    if ep % 20 == 0 and ep > 0: 
+    	save_model_weights(params, 'harmonic_train_'+str(ep+ep0)+'EP', 'models')
 
 
-s12pred = model(tVec)
-np.savetxt("short_s12_50EP" + appendix + ".txt", s12pred)
+s12pred, caches = model_forward(tVec, params)
+s12 = tf.convert_to_tensor(np.transpose(s12pred), dtype=tf.float64)
+print("Final infidelity: " + str(loss_fn(s12).numpy()))
 
-model.save_weights("/user/work/kk19347/short_exchange_trained50EP" + appendix)
+save_model_weights(params, 'harmonic_train_'+str(ep0+n_epochs)+'EP', 'models')
